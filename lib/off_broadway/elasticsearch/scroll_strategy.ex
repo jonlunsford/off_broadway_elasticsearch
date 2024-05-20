@@ -38,16 +38,8 @@ defmodule OffBroadway.Elasticsearch.ScrollStrategy do
 
   @behaviour OffBroadway.Elasticsearch.Strategy
 
-  @typedoc """
-  A keyword list of all Broadway options/state
-  """
-  @type broadway_state :: keyword()
-
-  @typedoc """
-  A Elasticsearch document represented as a Map. To allow maximum control, the
-  entire document is returned, including metadata along with the `_source`.
-  """
-  @type document :: map()
+  @type broadway_state :: OffBroadway.Elasticsearch.broadway_state()
+  @type document :: OffBroadway.Elasticsearch.document()
 
   @impl true
   @spec before_execute(state :: broadway_state(), demand :: non_neg_integer()) ::
