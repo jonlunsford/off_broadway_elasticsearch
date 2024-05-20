@@ -24,3 +24,4 @@ off_broadway_elasticsearch-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
+.env
