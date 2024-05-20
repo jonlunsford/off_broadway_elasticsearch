@@ -10,7 +10,7 @@ defmodule OffBroadway.Elasticsearch.MixProject do
       app: :off_broadway_elasticsearch,
       version: @version,
       elixir: "~> 1.15",
-      name: "OffBroadwayElasticsearch",
+      name: "OffBroadway.Elasticsearch",
       description: @description,
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -32,16 +32,22 @@ defmodule OffBroadway.Elasticsearch.MixProject do
       {:broadway, "~> 1.0.7"},
       {:ex_doc, ">= 0.32.2", only: [:dev, :docs], runtime: false},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
-      # Elasticsearch client
-      {:snap, "~> 0.11"},
-      {:finch, "~> 0.18"}
+      {:req, "~> 0.4.0"}
     ]
   end
 
   defp docs do
     [
       main: "README.md",
-      extras: ["CHANGELOG.md", "CONTRIBUTING.md", "LICENSE.md"],
+      nest_modules_by_prefix: [OffBroadway.Elasticsearch],
+      groups_for_modules: [
+        "Search Strategies": [
+          OffBroadway.Elasticsearch.SearchAfterStrategy,
+          OffBroadway.Elasticsearch.SliceStrategy,
+          OffBroadway.Elasticsearch.ScrollStrategy
+        ],
+        Behaviors: [OffBroadway.Elasticsearch.Strategy]
+      ],
       source_url: @repo_url,
       source_ref: "#{@version}"
     ]
