@@ -92,7 +92,7 @@ defmodule OffBroadway.Elasticsearch.Producer do
       - [`:scroll`](`OffBroadway.Elasticsearch.ScrollStrategy`)
       - [`:slice`](`OffBroadway.Elasticsearch.SliceStrategy`)
       - `:auto` (Default) Select the best strategy based on Broadway config.
-  - `strategy_module:` (`Atom.t()`). A custom module that implemments
+  - `strategy_module:` (`Atom.t()`). A custom module that implements
   `OffBroadway.Elasticsearch.Strategy` to be used if any of the built in
   strategies don't fit your use case.
   """
