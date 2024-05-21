@@ -6,35 +6,105 @@ defmodule OffBroadway.Elasticsearch.Producer do
   Strategies are meant to provide flexibility based on your use case. The
   current strategies are:
 
-  - `OffBroadway.Elasticsearch.SearchAfterStrategy`
-  - `OffBroadway.Elasticsearch.SliceStrategy`
-  - `OffBroadway.Elasticsearch.ScrollStrategy`
+  - `OffBroadway.Elasticsearch.SearchAfterStrategy` - Docs: [Search After](https://www.elastic.co/guide/en/elasticsearch/reference/8.13/paginate-search-results.html#search-after)
+  - `OffBroadway.Elasticsearch.ScrollStrategy`- Docs: [Scroll Search](https://www.elastic.co/guide/en/elasticsearch/reference/8.13/paginate-search-results.html#scroll-search-results)
+  - `OffBroadway.Elasticsearch.SliceStrategy` - Docs: [Sliced Scroll](https://www.elastic.co/guide/en/elasticsearch/reference/8.13/paginate-search-results.html#slice-scroll)
 
-  See Elasticsearch docs: [Paginating Search Results](https://www.elastic.co/guide/en/elasticsearch/reference/8.13/paginate-search-results.html#paginate-search-results)
+  **The available options are:**
+
+  - `host:` (`String.t()`) - Required. The host where Elasticsearch can be found.
+  - `index:` (`String.t()`) - Required. The index to be ingested.
+  - `search:` (`Map.t()`) - Required. The search payload to be sent to Elasticsearch.
+  - `strategy:` (`Atom.t()`) - One of:
+      - [`:search_after`](`OffBroadway.Elasticsearch.SearchAfterStrategy`)
+      - [`:scroll`](`OffBroadway.Elasticsearch.ScrollStrategy`)
+      - [`:slice`](`OffBroadway.Elasticsearch.SliceStrategy`)
+      - `:auto` (Default) Select the best strategy based on Broadway config.
+  - `strategy_module:` (`Atom.t()`). A custom module that implemments
+  `OffBroadway.Elasticsearch.Strategy` to be used if any of the built in
+  strategies don't fit your use case.
+
+  ## Example:
+
+  ```Elixir
+  defmodule MyBroadway do
+    use Broadway
+
+    def start_link(_opts) do
+      Broadway.start_link(__MODULE__,
+        name: __MODULE__,
+        producer: [
+          module: {
+            OffBroadway.Elasticsearch.Producer,
+            [
+              # The options listed above.
+              host: "http://localhost:9200",
+              index: "my-index",
+              strategy: :slice,
+              # If `strategy_module` is provided, it will take precedence over
+              # `strategy`, that can be omitted when providing this option.
+              strategy_module: MySearchStrategy
+              search: search() # Extracted to a private function below.
+            ]
+          },
+          transformer: {__MODULE__, :transform, []},
+          concurrency: 10
+        ],
+        processors: [
+          default: [concurrency: 5]
+        ]
+      )
+    end
+
+    defp search do
+      %{
+        query: %{
+          match_all: %{}
+        },
+        sort: %{
+          created_at: "asc",
+          _id: "asc"
+        }
+      }
+    end
+  end
+  ```
   """
   use GenStage
   require Logger
 
-  alias OffBroadway.Elasticsearch.{SearchAfterStrategy, ScrollStrategy, SliceStrategy}
+  alias OffBroadway.Elasticsearch.{SearchAfterStrategy, ScrollStrategy, SliceStrategy, Options}
 
-  @doc """
-  Available strategies
-  """
   @strategies %{
     search_after: SearchAfterStrategy,
     scroll: ScrollStrategy,
     slice: SliceStrategy
   }
 
+  @doc """
+  The available options are:
+
+  - `host:` (`String.t()`) - Required. The host where Elasticsearch can be found.
+  - `index:` (`String.t()`) - Required. The index to be ingested.
+  - `search:` (`Map.t()`) - Required. The search payload to be sent to Elasticsearch.
+  - `strategy:` (`Atom.t()`) - One of:
+      - [`:search_after`](`OffBroadway.Elasticsearch.SearchAfterStrategy`)
+      - [`:scroll`](`OffBroadway.Elasticsearch.ScrollStrategy`)
+      - [`:slice`](`OffBroadway.Elasticsearch.SliceStrategy`)
+      - `:auto` (Default) Select the best strategy based on Broadway config.
+  - `strategy_module:` (`Atom.t()`). A custom module that implemments
+  `OffBroadway.Elasticsearch.Strategy` to be used if any of the built in
+  strategies don't fit your use case.
+  """
   def start_link(opts) do
     GenStage.start_link(__MODULE__, :ok, opts)
   end
 
-  def init(state \\ []) do
-    strategy_mod = Map.get(@strategies, state[:strategy])
-    state = Keyword.put(state, :strategy_mod, strategy_mod)
+  def init(opts \\ []) do
+    strategy_mod = Map.get(@strategies, opts[:strategy])
+    opts = Keyword.put(opts, :strategy_mod, strategy_mod)
 
-    {:producer, state}
+    {:producer, opts}
   end
 
   def handle_demand(demand, state) when demand > 0 do

@@ -3,6 +3,8 @@ defmodule OffBroadway.Elasticsearch.Strategy do
   Elasticseach supports many strategies for efficiently searching over large
   amounts of data, by adopting a strategy pattern, different strategies can be
   created and configured depending on the use case.
+
+  To learn more about other strategies see Elasticsearch docs: [Paginating Search Results](https://www.elastic.co/guide/en/elasticsearch/reference/8.13/paginate-search-results.html#paginate-search-results)
   """
 
   alias OffBroadway.Elasticsearch
