@@ -41,7 +41,7 @@ defmodule OffBroadway.Elasticsearch.MixProject do
     [
       main: "README.md",
       nest_modules_by_prefix: [OffBroadway.Elasticsearch],
-      extras: ["README.md", "LICENSE.MD"],
+      extras: ["README.md", "LICENSE.md", "CHANGELOG.md"],
       groups_for_modules: [
         "Search Strategies": [
           OffBroadway.Elasticsearch.SearchAfterStrategy,
