@@ -25,7 +25,7 @@ defmodule OffBroadway.Elasticsearch.Producer do
 
   ## Example:
 
-  ```Elixir
+  ```
   defmodule MyBroadway do
     use Broadway
 

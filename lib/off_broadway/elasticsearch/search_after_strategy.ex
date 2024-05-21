@@ -8,7 +8,7 @@ defmodule OffBroadway.Elasticsearch.SearchAfterStrategy do
 
   ## Example
 
-  ```Elixir
+  ```
   defmodule MyBroadway do
     use Broadway
 
