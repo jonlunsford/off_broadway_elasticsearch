@@ -10,12 +10,13 @@ defmodule OffBroadway.Elasticsearch.MixProject do
       app: :off_broadway_elasticsearch,
       version: @version,
       elixir: "~> 1.15",
-      name: "OffBroadway.Elasticsearch",
+      name: "OffBroadwayElasticsearch",
       description: @description,
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       docs: docs(),
-      package: package()
+      package: package(),
+      source_url: @repo_url
     ]
   end
 
@@ -40,7 +41,7 @@ defmodule OffBroadway.Elasticsearch.MixProject do
     [
       main: "README.md",
       nest_modules_by_prefix: [OffBroadway.Elasticsearch],
-      extras: ["README.md"],
+      extras: ["README.md", "LICENSE.MD"],
       groups_for_modules: [
         "Search Strategies": [
           OffBroadway.Elasticsearch.SearchAfterStrategy,
@@ -49,7 +50,6 @@ defmodule OffBroadway.Elasticsearch.MixProject do
         ],
         Behaviors: [OffBroadway.Elasticsearch.Strategy]
       ],
-      source_url: @repo_url,
       source_ref: "#{@version}"
     ]
   end
@@ -57,7 +57,9 @@ defmodule OffBroadway.Elasticsearch.MixProject do
   defp package do
     [
       maintainers: ["Jon Lunsford"],
-      licenses: ["MIT"],
+      licenses: ["Apache-2.0", "MIT"],
+      homepage_url: @repo_url,
+      source_url: @repo_url,
       links: %{
         "GitHub" => @repo_url,
         "Documentation" => "https://hexdocs.pm/off_broadway_elasticsearch",
