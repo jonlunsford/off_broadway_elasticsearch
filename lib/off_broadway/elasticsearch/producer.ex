@@ -19,7 +19,6 @@ defmodule OffBroadway.Elasticsearch.Producer do
       - [`:search_after`](`OffBroadway.Elasticsearch.SearchAfterStrategy`)
       - [`:scroll`](`OffBroadway.Elasticsearch.ScrollStrategy`)
       - [`:slice`](`OffBroadway.Elasticsearch.SliceStrategy`)
-      - `:auto` (Default) Select the best strategy based on Broadway config.
   - `strategy_module:` (`Atom.t()`). A custom module that implemments
   `OffBroadway.Elasticsearch.Strategy` to be used if any of the built in
   strategies don't fit your use case.
@@ -73,7 +72,7 @@ defmodule OffBroadway.Elasticsearch.Producer do
   use GenStage
   require Logger
 
-  alias OffBroadway.Elasticsearch.{SearchAfterStrategy, ScrollStrategy, SliceStrategy, Options}
+  alias OffBroadway.Elasticsearch.{SearchAfterStrategy, ScrollStrategy, SliceStrategy}
 
   @strategies %{
     search_after: SearchAfterStrategy,
@@ -91,7 +90,6 @@ defmodule OffBroadway.Elasticsearch.Producer do
       - [`:search_after`](`OffBroadway.Elasticsearch.SearchAfterStrategy`)
       - [`:scroll`](`OffBroadway.Elasticsearch.ScrollStrategy`)
       - [`:slice`](`OffBroadway.Elasticsearch.SliceStrategy`)
-      - `:auto` (Default) Select the best strategy based on Broadway config.
   - `strategy_module:` (`Atom.t()`). A custom module that implements
   `OffBroadway.Elasticsearch.Strategy` to be used if any of the built in
   strategies don't fit your use case.
@@ -101,14 +99,19 @@ defmodule OffBroadway.Elasticsearch.Producer do
   end
 
   def init(opts \\ []) do
-    strategy_mod = Map.get(@strategies, opts[:strategy])
-    opts = Keyword.put(opts, :strategy_mod, strategy_mod)
+    strategy_mod =
+      case Keyword.get(opts, :strategy_module) do
+        nil -> Map.get(@strategies, opts[:strategy])
+        mod -> mod
+      end
+
+    opts = Keyword.put(opts, :strategy_module, strategy_mod)
 
     {:producer, opts}
   end
 
   def handle_demand(demand, state) when demand > 0 do
-    mod = state[:strategy_mod]
+    mod = state[:strategy_module]
 
     state =
       if function_exported?(mod, :before_execute, 2) do
