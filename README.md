@@ -1,5 +1,7 @@
 # OffBroadway.Elasticsearch
 
+![Hex.pm Version](https://img.shields.io/hexpm/v/off_broadway_elasticsearch)
+
 A flexible and extensible Elasticsearch producer for [Broadway](https://github.com/plataformatec/broadway) to process large amounts of data from your Elasticsearch cluster.
 
 Full documentation can be found at https://hexdocs.pm/off_broadway_elasticsearch
