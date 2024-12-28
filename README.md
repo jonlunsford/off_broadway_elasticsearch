@@ -46,9 +46,9 @@ end
 - `index:` (`String.t()`) - Required. The index to be ingested.
 - `search:` (`Map.t()`) - Required. The search payload to be sent to Elasticsearch.
 - `strategy:` (`Atom.t()`) - One of:
-  - [`:search_after`](`OffBroadway.Elasticsearch.SearchAfterStrategy`)
-  - [`:scroll`](`OffBroadway.Elasticsearch.ScrollStrategy`)
-  - [`:slice`](`OffBroadway.Elasticsearch.SliceStrategy`)
+  - [`:search_after`](https://github.com/jonlunsford/off_broadway_elasticsearch/blob/main/lib/off_broadway/elasticsearch/search_after_strategy.ex)
+  - [`:scroll`](https://github.com/jonlunsford/off_broadway_elasticsearch/blob/main/lib/off_broadway/elasticsearch/scroll_strategy.ex)
+  - [`:slice`](https://github.com/jonlunsford/off_broadway_elasticsearch/blob/main/lib/off_broadway/elasticsearch/slice_strategy.ex)
 - `strategy_module:` (`Atom.t()`). A custom module that implements
   `OffBroadway.Elasticsearch.Strategy` to be used if any of the built in
   strategies don't fit your use case.
