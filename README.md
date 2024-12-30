@@ -55,7 +55,7 @@ end
 
 ### Example:
 
-```
+```Elixir
 defmodule MyBroadway do
   use Broadway
 
